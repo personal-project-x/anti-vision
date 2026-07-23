@@ -67,16 +67,41 @@ var ce=React.createElement;
 var useState=React.useState;
 var useEffect=React.useEffect;
 
-var SQ=[
-  {key:"q1",phase:"アンチビジョンを発見する",q:"今、我慢し続けていることは何か?",hint:"不満に思いながらも変えていないこと。小さなことでも。",rows:4},
-  {key:"q2",phase:"アンチビジョンを発見する",q:"5年後、何も変わっていなかったら、ある平均的な火曜日はどうなっているか?",hint:"起きた時の感覚、仕事、周りにいる人、夜10時の気分まで具体的に。",rows:5},
-  {key:"q3",phase:"アンチビジョンを発見する",q:"人生の終わりに「安全な選択だけをしてきた」としたら、何を失ったか?",hint:"試せなかったこと、なれなかった自分、言えなかった言葉。",rows:4},
-  {key:"antivision",phase:"アンチビジョンを圧縮する",q:"「絶対にこうなりたくない」を一文で書く",hint:"読むたびに何か感じるものにする。これがあなたのAnti-Vision。",rows:3},
-  {key:"q5",phase:"ビジョンを描く",q:"3年後、理想の平均的な火曜日はどうなっているか?",hint:"現実的かどうかは一旦無視。本当に望む一日を具体的に。",rows:5},
-  {key:"q6",phase:"ビジョンを描く",q:"その人生を生きる自分は「どんな人間」か? 一文で自己定義する",hint:"「私は〜な人間だ」という形で。",rows:2},
-  {key:"vision",phase:"ビジョンを圧縮する",q:"向かっている先を一文で書く",hint:"Anti-Visionと対になるもの。これがあなたのVision MVP。",rows:3}
+var WEEKLY_QS=[
+  {key:"q1",phase:"不満を可視化する",q:"「まあ仕方ない」と受け入れて我慢し続けていることは何か?",rows:3},
+  {key:"q2",phase:"不満を可視化する",q:"繰り返し不満を言うのに、実際には変えていないことを3つ挙げるとしたら?",rows:3},
+  {key:"q3",phase:"不満を可視化する",q:"その不満を、言葉ではなく行動だけ見ていた人がいたら、あなたが本当は何を求めていると結論づけるか?",rows:3},
+  {key:"q4",phase:"不満を可視化する",q:"深く尊敬する人になら認めるのが耐えられない、今の生活についての真実は何か?",rows:3},
+  {key:"q5",phase:"アンチビジョンを構築する",q:"この先5年、何も変わらなかったら、ある平均的な火曜日を描写してください。",hint:"どこで目覚め、体はどう感じ、最初に何を考え、周りに誰がいて、9〜18時は何をし、22時はどんな気分か。",rows:5},
+  {key:"q6",phase:"アンチビジョンを構築する",q:"それを10年後でやってみてください。",hint:"何を失ったか。どんな機会が閉じたか。誰があなたを諦めたか。",rows:5},
+  {key:"q7",phase:"アンチビジョンを構築する",q:"人生の終わり。安全な選択だけをしてきたとしたら、その代償は何か?",hint:"感じること・挑戦すること・なることを、自分に許さなかったものは?",rows:4},
+  {key:"q8",phase:"アンチビジョンを構築する",q:"今描いた未来を、既に生きている人が周りにいないか? その人になると考えると何を感じるか?",rows:3},
+  {key:"q9",phase:"アンチビジョンを構築する",q:"本当に変わるために手放すべきアイデンティティは何か?",hint:"「私は〜な人間だ」という形で。手放す社会的コストは?",rows:3},
+  {key:"q10",phase:"アンチビジョンを構築する",q:"変われていない一番きまり悪い理由は何か?",hint:"弱い・怖い・怠けていると聞こえる、格好悪い本当の理由。",rows:3},
+  {key:"q11",phase:"アンチビジョンを構築する",q:"今の行動が自己防衛だとしたら、具体的に何を守っているのか? その代償は?",rows:3},
+  {key:"antivision",phase:"アンチビジョンを圧縮する",q:"「絶対にこうなりたくない」を一文で。",hint:"読むたびに何か感じるものにする。",rows:3},
+  {key:"q13",phase:"ビジョンを構築する",q:"現実性を忘れて。3年後、指を鳴らして違う人生を生きられるなら、本当は何を望むか?",hint:"平均的な火曜日はどんな一日か。Q5と同じ粒度で。",rows:5},
+  {key:"q14",phase:"ビジョンを構築する",q:"その人生が無理せず自然に感じるには、自分について何を信じている必要があるか?",hint:"「私は〜な人間だ」というアイデンティティ宣言。",rows:3},
+  {key:"q15",phase:"ビジョンを構築する",q:"もし既にその人間だとしたら、今週やることは何か?",rows:3},
+  {key:"vision",phase:"ビジョンを圧縮する",q:"向かっている先を一文で。",hint:"進化するものと知りつつ、今のVision MVPを。",rows:3},
+  {key:"q17",phase:"統合する",q:"今週を経て、自分が行き詰まっていた本当の理由について、一番しっくりくるものは何か?",rows:3},
+  {key:"q18",phase:"統合する",q:"本当の敵は何か?",hint:"状況や他人のせいではなく、支配してきた内的パターンや思い込みを一言で。",rows:2},
+  {key:"goal_year",phase:"ゴールを設定する",q:"1年後の視点: 何が本当になっていれば、古いパターンを断ち切れたと分かるか?",hint:"1つの具体的なことで。",rows:3},
+  {key:"goal_month",phase:"ゴールを設定する",q:"1ヶ月後の視点: 1年後の視点が現実であり続けるために、1ヶ月後に何が本当になっている必要があるか?",rows:3},
+  {key:"goal_week",phase:"ゴールを設定する",q:"日々の視点: なりつつある自分なら当然やる、今週タイムブロックできる2〜3個の行動は何か?",rows:3},
+  {key:"constraints",phase:"制約を決める",q:"このビジョンを実現するために、絶対に犠牲にしないものは何か?",hint:"やらないと決めるルール。",rows:3}
 ];
-var CQ=["今やっていることで、何を避けているか?","今日の行動を誰かが見ていたら、自分が何を求めていると判断するか?","今この瞬間、アンチビジョンに近づいているか、遠ざかっているか?","一番重要なのに、一番後回しにしていることは何か?"];
+var DAILY_QS=[
+  "今やっていることで、本当は何を避けているか?",
+  "この2時間を誰かが録画していたら、自分が人生に何を求めていると結論づけるか?",
+  "嫌いな人生に向かっているか、欲しい人生に向かっているか?",
+  "本当は一番重要なのに、重要じゃないふりをしていることは何か?",
+  "今日やったことのうち、本心からではなく「らしさを守るため」にやったことは何か?",
+  "今、一番生きていると感じるか、一番死んでいると感じるか?",
+  "「なりたい自分」だと人に思われる必要がなくなったら、何が変わるか?",
+  "人生のどこで、生きている実感を安全と引き換えにしているか?",
+  "明日なれる、なりたい自分の一番小さいバージョンは何か?"
+];
 
 function lsget(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function lsset(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -91,81 +116,72 @@ function OHdr(p){
 
 function Chart(p){
   var data=p.data;
-  if(!data||!data.length)return ce("div",{style:{textAlign:"center",padding:"1.5rem",fontSize:14,color:"var(--txt2)"}},"夜のセッションを記録するとグラフが表示されます");
+  if(!data||!data.length)return ce("div",{style:{textAlign:"center",padding:"1.5rem",fontSize:14,color:"var(--txt2)"}},"週次の深掘りを記録するとグラフが表示されます");
   var W=320,H=110,pl=24,pr=8,pt=8,pb=22,iW=W-pl-pr,iH=H-pt-pb,n=data.length;
   function px(i){return pl+(n<2?iW/2:i/(n-1)*iW);}
   function py(s){return pt+iH-(s-1)/9*iH;}
   var pts=data.map(function(d,i){return {x:px(i),y:py(d.score),s:d.score,dt:d.date};});
   var poly=pts.map(function(p){return p.x+","+p.y;}).join(" ");
-  var lblIdx=n<=6?data.map(function(_,i){return i;}):
-    data.map(function(_,i){return i;}).filter(function(i){return i===0||i===n-1||i%Math.ceil(n/5)===0;});
+  var lblIdx=n<=6?data.map(function(_,i){return i;}):data.map(function(_,i){return i;}).filter(function(i){return i===0||i===n-1||i%Math.ceil(n/5)===0;});
   return ce("svg",{viewBox:"0 0 "+W+" "+H,width:"100%",style:{display:"block"}},
-    [1,5,10].map(function(v){
-      return ce("g",{key:v},
-        ce("line",{x1:pl,y1:py(v),x2:W-pr,y2:py(v),stroke:"rgba(0,0,0,0.08)",strokeWidth:0.5,strokeDasharray:"3 3"}),
-        ce("text",{x:pl-3,y:py(v)+4,fontSize:9,fill:"var(--txt2)",textAnchor:"end"},v));
-    }),
+    [1,5,10].map(function(v){return ce("g",{key:v},
+      ce("line",{x1:pl,y1:py(v),x2:W-pr,y2:py(v),stroke:"rgba(0,0,0,0.08)",strokeWidth:0.5,strokeDasharray:"3 3"}),
+      ce("text",{x:pl-3,y:py(v)+4,fontSize:9,fill:"var(--txt2)",textAnchor:"end"},v));}),
     ce("polyline",{points:poly,fill:"none",stroke:"var(--txt)",strokeWidth:2,strokeLinejoin:"round",strokeLinecap:"round"}),
     pts.map(function(p,i){return ce("circle",{key:i,cx:p.x,cy:p.y,r:3,fill:"var(--txt)"});}),
-    lblIdx.map(function(i){
-      return ce("text",{key:i,x:px(i),y:H-5,fontSize:9,fill:"var(--txt2)",textAnchor:"middle"},data[i].date);
-    })
+    lblIdx.map(function(i){return ce("text",{key:i,x:px(i),y:H-5,fontSize:9,fill:"var(--txt2)",textAnchor:"middle"},data[i].date);})
   );
 }
 
 function App(){
   var _sc=useState("loading"),screen=_sc[0],setScreen=_sc[1];
   var _tb=useState("home"),tab=_tb[0],setTab=_tb[1];
-  var _st=useState(0),step=_st[0],setStep=_st[1];
-  var _sa=useState({}),sAns=_sa[0],setSAns=_sa[1];
+  var _wst=useState(0),wStep=_wst[0],setWStep=_wst[1];
+  var _wa=useState({}),wAns=_wa[0],setWAns=_wa[1];
   var _cf=useState({apiKey:"",setupComplete:false,antivision:"",vision:"",setupDate:""}),cfg=_cf[0],setCfg=_cf[1];
-  var _ms=useState({year:"",month:"",week:""}),milestones=_ms[0];
-  var _lg=useState([]),logs=_lg[0],setLogs=_lg[1];
+  var _ms=useState({year:"",month:"",week:"",constraints:""}),milestones=_ms[0],setMilestones=_ms[1];
+  var _dl=useState([]),dailyLogs=_dl[0],setDailyLogs=_dl[1];
+  var _wl=useState([]),weeklyLogs=_wl[0],setWeeklyLogs=_wl[1];
   var _hs=useState([]),hist=_hs[0],setHist=_hs[1];
-  var _ma=useState(""),mAns=_ma[0],setMAns=_ma[1];
-  var _cq=useState(""),cQ=_cq[0],setCQ=_cq[1];
-  var _ca=useState(""),cAns=_ca[0],setCAns=_ca[1];
-  var _e1=useState(""),e1=_e1[0],setE1=_e1[1];
-  var _e2=useState(""),e2=_e2[0],setE2=_e2[1];
+  var _dq=useState(""),dailyQ=_dq[0],setDailyQ=_dq[1];
+  var _da=useState(""),dailyAns=_da[0],setDailyAns=_da[1];
   var _sc2=useState(5),score=_sc2[0],setScore=_sc2[1];
   var _tr=useState([]),tries=_tr[0],setTries=_tr[1];
   var _lt=useState(false),loadTries=_lt[0],setLoadTries=_lt[1];
   var _di=useState(null),diffItem=_di[0],setDiffItem=_di[1];
-  var _ua=useState(""),uAV=_ua[0],setUAV=_ua[1];
-  var _uv=useState(""),uV=_uv[0],setUV=_uv[1];
   var _dn=useState({title:"",msg:""}),done=_dn[0],setDone=_dn[1];
   var _ak=useState(""),apiKey=_ak[0],setApiKey=_ak[1];
-  var _lm=useState({year:"",month:"",week:""}),lms=_lm[0],setLms=_lm[1];
 
   var todayKey=new Date().toISOString().slice(0,10);
-  var todayLog=logs.find(function(l){return l.date===todayKey;})||{};
 
   useEffect(function(){
-    var c=lsget("av-config"),m=lsget("av-milestones"),l=lsget("av-logs"),h=lsget("av-history");
+    var c=lsget("av-config"),m=lsget("av-milestones"),dl=lsget("av-daily-logs"),wl=lsget("av-weekly-logs"),h=lsget("av-history");
     if(c){setCfg(c);setApiKey(c.apiKey||"");}
-    if(m){setLms(m);}
-    if(l)setLogs(l);
+    if(m){setMilestones(Object.assign({year:"",month:"",week:"",constraints:""},m));}
+    if(dl)setDailyLogs(dl);
+    if(wl)setWeeklyLogs(wl);
     if(h)setHist(h);
     setScreen(c&&c.setupComplete?"main":"welcome");
   },[]);
 
   function saveCfg(c){setCfg(c);lsset("av-config",c);}
-  function saveMsDone(m){setLms(m);lsset("av-milestones",m);}
-  function addLog(patch){
-    var entry=Object.assign({date:todayKey},todayLog,patch);
-    var nl=logs.filter(function(l){return l.date!==todayKey;}).concat([entry]);
-    setLogs(nl);lsset("av-logs",nl);
+  function addHist(av,v){var nh=[{antivision:av,vision:v,date:todayKey}].concat(hist).slice(0,20);setHist(nh);lsset("av-history",nh);}
+
+  function startWeekly(){
+    var prev=lsget("av-weekly-answers")||{};
+    setWAns(prev);setWStep(0);setScreen("weekly");
   }
-  function addHist(av,v){
-    var nh=[{antivision:av,vision:v,date:todayKey}].concat(hist).slice(0,20);
-    setHist(nh);lsset("av-history",nh);
-  }
-  function nextSetup(){
-    var el=document.getElementById("sta"),ans=el?el.value.trim():"";
+  function nextWeekly(){
+    var el=document.getElementById("wta"),ans=el?el.value.trim():"";
     if(!ans){if(el)el.focus();return;}
-    var q=SQ[step],na=Object.assign({},sAns);na[q.key]=ans;setSAns(na);
-    if(step<SQ.length-1){setStep(step+1);}
-    else{var c=Object.assign({},cfg,{setupComplete:true,antivision:na.antivision,vision:na.vision,setupDate:todayKey,apiKey:apiKey});saveCfg(c);setScreen("main");setTab("home");}
+    var q=WEEKLY_QS[wStep],na=Object.assign({},wAns);na[q.key]=ans;setWAns(na);
+    if(wStep<WEEKLY_QS.length-1){setWStep(wStep+1);}
+    else{setScore(5);setTries([]);setScreen("weeklyfinish");}
+  }
+  function prevWeekly(){
+    var el=document.getElementById("wta");
+    if(el&&el.value.trim()){var q=WEEKLY_QS[wStep],na=Object.assign({},wAns);na[q.key]=el.value.trim();setWAns(na);}
+    if(wStep>0)setWStep(wStep-1);else setScreen("main");
   }
   function genTries(){
     var key=cfg.apiKey||apiKey;
@@ -174,8 +190,8 @@ function App(){
     fetch("https://api.anthropic.com/v1/messages",{method:"POST",
       headers:{"Content-Type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01"},
       body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,
-        system:"あなたはDan Koeのアンチビジョン・プロトコルのコーチです。明日試すべき具体的なアクション(Try)を3つ提案してください。必ず次のJSON形式のみで返してください: {\"tries\":[\"アクション1\",\"アクション2\",\"アクション3\"]}",
-        messages:[{role:"user",content:"アンチビジョン: "+cfg.antivision+"\nビジョン: "+cfg.vision+"\n振り返り1: "+e1+"\n振り返り2: "+e2+"\nスコア: "+score+"/10"}]})
+        system:"あなたはDan Koeのアンチビジョン・プロトコルのコーチです。今週の深掘りの回答を踏まえ、来週試すべき具体的なアクションを3つ提案してください。必ず次のJSON形式のみで返してください: {\"tries\":[\"アクション1\",\"アクション2\",\"アクション3\"]}",
+        messages:[{role:"user",content:"アンチビジョン: "+wAns.antivision+"\nビジョン: "+wAns.vision+"\n今年の目標: "+wAns.goal_year+"\n今月の目標: "+wAns.goal_month+"\n今週の行動: "+wAns.goal_week+"\nスコア: "+score+"/10"}]})
     }).then(function(r){return r.json();}).then(function(d){
       var text=(d.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("");
       var p=JSON.parse(text.replace(/```json|```/g,"").trim());
@@ -183,78 +199,92 @@ function App(){
     }).catch(function(){setTries(["提案の取得に失敗しました。APIキーを確認してください。"]);
     }).finally(function(){setLoadTries(false);});
   }
+  function finishWeekly(){
+    var changed=cfg.antivision&&(wAns.antivision!==cfg.antivision||wAns.vision!==cfg.vision);
+    if(changed)addHist(cfg.antivision,cfg.vision);
+    var c=Object.assign({},cfg,{setupComplete:true,antivision:wAns.antivision,vision:wAns.vision,apiKey:apiKey,setupDate:cfg.setupDate||todayKey});
+    saveCfg(c);
+    var ms={year:wAns.goal_year,month:wAns.goal_month,week:wAns.goal_week,constraints:wAns.constraints};
+    setMilestones(ms);lsset("av-milestones",ms);
+    lsset("av-weekly-answers",wAns);
+    var wl=[{date:todayKey,score:score,tries:tries}].concat(weeklyLogs).slice(0,52);
+    setWeeklyLogs(wl);lsset("av-weekly-logs",wl);
+    setDone({title:"週次の深掘り完了",msg:"アンチビジョン・ビジョン・目標を更新しました。"});
+    setScreen("done");
+  }
 
-  var scored=logs.filter(function(l){return l.score;});
-  var avg=scored.length>0?(scored.reduce(function(s,l){return s+l.score;},0)/scored.length).toFixed(1):"-";
-  var streak=(function(){var s=0,sorted=logs.slice().sort(function(a,b){return b.date.localeCompare(a.date);});for(var i=0;i<sorted.length;i++){if(sorted[i].score)s++;else break;}return s;})();
-  var chartData=logs.filter(function(l){return l.score;}).slice(-14).map(function(l){return{date:l.date.slice(5),score:l.score};});
+  function startDaily(){
+    setDailyQ(DAILY_QS[Math.floor(Math.random()*DAILY_QS.length)]);setDailyAns("");setScreen("daily");
+  }
+  function saveDaily(){
+    var nl=dailyLogs.concat([{date:todayKey,question:dailyQ,answer:dailyAns.trim()}]);
+    setDailyLogs(nl);lsset("av-daily-logs",nl);
+    setDone({title:"記録しました",msg:"オートパイロットを止めました。"});
+    setScreen("done");
+  }
+
+  var dailyDoneToday=dailyLogs.some(function(l){return l.date===todayKey;});
+  var lastWeekly=weeklyLogs[0];
+  var daysSinceWeekly=lastWeekly?Math.floor((Date.now()-new Date(lastWeekly.date).getTime())/86400000):null;
+  var weeklyStatus=daysSinceWeekly===null?"未実施":(daysSinceWeekly===0?"今週済み":daysSinceWeekly+"日前");
+  var chartData=weeklyLogs.slice(0,14).slice().reverse().map(function(l){return{date:l.date.slice(5),score:l.score};});
 
   if(screen==="loading")return ce("div",{style:{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"80vh",color:"var(--txt2)"}},"読み込み中...");
 
   if(screen==="welcome")return ce("div",null,
     ce("div",{className:"hdr"},ce("span",{className:"logo"},"Anti-Vision"),ce("span",{className:"badge"},"初回セットアップ")),
-    ce("div",{style:{marginBottom:"1.5rem"}},ce("div",{className:"h1"},"1日で人生を書き換える"),ce("div",{className:"sub"},"Dan Koeのアンチビジョン・プロトコル。なりたくない未来を直視することで、本当に向かうべき方向を見つける。")),
+    ce("div",{style:{marginBottom:"1.5rem"}},ce("div",{className:"h1"},"人生を書き換える"),ce("div",{className:"sub"},"Dan Koeのアンチビジョン・プロトコル。週1回の深掘りと、毎日の軽い自問の2本立てです。")),
     ce("div",{className:"card"},
-      ce("div",{className:"lbl"},"Claude API キー (任意)"),
-      ce("input",{type:"password",value:apiKey,onChange:function(e){setApiKey(e.target.value);},placeholder:"sk-ant-... (Try提案機能に必要)",style:{marginTop:4}}),
+      ce("div",{className:"lbl"},"Claude API キー(任意)"),
+      ce("input",{type:"password",value:apiKey,onChange:function(e){setApiKey(e.target.value);},placeholder:"sk-ant-...(Try提案機能に必要)",style:{marginTop:4}}),
       ce("div",{style:{fontSize:12,color:"var(--txt2)",marginTop:6}},"APIキーなしでも基本機能は使えます")),
-    ce("button",{className:"btn-p",onClick:function(){setCfg(function(c){return Object.assign({},c,{apiKey:apiKey});});setStep(0);setSAns({});setScreen("setup");}},"セットアップを始める")
+    ce("button",{className:"btn-p",onClick:function(){setCfg(function(c){return Object.assign({},c,{apiKey:apiKey});});startWeekly();}},"深掘りセットアップを始める(22問)")
   );
 
-  if(screen==="setup"){
-    var q=SQ[step],pct=Math.round(((step+1)/SQ.length)*100);
+  if(screen==="weekly"){
+    var q=WEEKLY_QS[wStep],pct=Math.round(((wStep+1)/WEEKLY_QS.length)*100);
     return ce("div",null,
-      ce(OHdr,{title:"初回セットアップ",onBack:function(){if(step===0)setScreen("welcome");else setStep(step-1);}}),
+      ce(OHdr,{title:"週次の深掘り",onBack:prevWeekly}),
       ce("div",null,
-        ce("div",{style:{display:"flex",justifyContent:"space-between",fontSize:12,color:"var(--txt2)",marginBottom:6}},ce("span",null,(step+1)+" / "+SQ.length),ce("span",null,"自動保存")),
+        ce("div",{style:{display:"flex",justifyContent:"space-between",fontSize:12,color:"var(--txt2)",marginBottom:6}},ce("span",null,(wStep+1)+" / "+WEEKLY_QS.length),ce("span",null,"自動保存")),
         ce("div",{className:"prog-bar"},ce("div",{className:"prog-fill",style:{width:pct+"%"}}))),
-      ce("div",{className:"qnum"},q.phase),ce("div",{className:"qtxt"},q.q),ce("div",{className:"hint"},q.hint),
-      ce("textarea",{id:"sta",key:step,defaultValue:sAns[q.key]||"",rows:q.rows,placeholder:"ここに書く...",style:{marginBottom:"1.25rem"}}),
-      ce("button",{className:"btn-p",onClick:nextSetup},step===SQ.length-1?"完成 →":"次へ")
+      ce("div",{className:"qnum"},q.phase),ce("div",{className:"qtxt"},q.q),
+      q.hint&&ce("div",{className:"hint"},q.hint),
+      ce("textarea",{id:"wta",key:q.key,defaultValue:wAns[q.key]||"",rows:q.rows,placeholder:"ここに書く...",style:{marginBottom:"1.25rem"}}),
+      ce("button",{className:"btn-p",onClick:nextWeekly},wStep===WEEKLY_QS.length-1?"最後へ →":"次へ")
     );
   }
 
-  if(screen==="morning")return ce("div",null,
-    ce(OHdr,{title:"朝のセッション",onBack:function(){setScreen("main");}}),
-    ce("div",{className:"card-d",style:{display:"flex",gap:10,alignItems:"flex-start"}},
-      ce("i",{className:"ti ti-alert-triangle",style:{fontSize:16,color:"var(--d-txt)",flexShrink:0,marginTop:2}}),
-      ce("div",null,ce("div",{className:"lbl-d"},"アンチビジョン"),ce("div",{className:"txt",style:{fontSize:13}},cfg.antivision))),
-    ce("div",{className:"qnum"},"今日の問い"),
-    ce("div",{className:"qtxt"},"もし今日の行動が1年後の自分を決めるとしたら、今日は何をすべきか?"),
-    ce("textarea",{value:mAns,onChange:function(e){setMAns(e.target.value);},rows:4,placeholder:"具体的に...",style:{marginBottom:12}}),
-    ce("button",{className:"btn-p",onClick:function(){addLog({morning:mAns.trim()});setDone({title:"朝のセッション完了",msg:"今日の焦点が決まりました。"});setScreen("done");}},"保存して終わる"),
-    ce("button",{className:"btn-s",onClick:function(){setScreen("main");}},"ホームに戻る")
-  );
-
-  if(screen==="checkin")return ce("div",null,
-    ce(OHdr,{title:"昼のチェックイン",onBack:function(){setScreen("main");}}),
-    ce("div",{className:"checkin-q"},cQ),
-    ce("textarea",{value:cAns,onChange:function(e){setCAns(e.target.value);},rows:3,placeholder:"思ったことをそのまま...",style:{marginBottom:12}}),
-    ce("button",{className:"btn-p",onClick:function(){addLog({checkin:cAns.trim()});setDone({title:"チェックイン完了",msg:"オートパイロットを止めました。"});setScreen("done");}},"記録する"),
-    ce("button",{className:"btn-s",onClick:function(){setScreen("main");}},"ホームに戻る")
-  );
-
-  if(screen==="evening")return ce("div",null,
-    ce(OHdr,{title:"夜のまとめ",onBack:function(){setScreen("main");}}),
-    ce("div",{className:"qnum"},"振り返り 1 / 2"),ce("div",{className:"qtxt"},"今日、アンチビジョンに近づく行動をしたか?"),
-    ce("textarea",{value:e1,onChange:function(ev){setE1(ev.target.value);},rows:3,placeholder:"正直に...",style:{marginBottom:"1.25rem"}}),
-    ce("div",{className:"qnum"},"振り返り 2 / 2"),ce("div",{className:"qtxt"},"明日、一つだけ変えるとしたら何か?"),
-    ce("textarea",{value:e2,onChange:function(ev){setE2(ev.target.value);},rows:3,placeholder:"小さくていい...",style:{marginBottom:"1.25rem"}}),
+  if(screen==="weeklyfinish")return ce("div",null,
+    ce(OHdr,{title:"週次の深掘り",onBack:function(){setWStep(WEEKLY_QS.length-1);setScreen("weekly");}}),
+    ce("div",{className:"card-d"},ce("div",{className:"lbl-d"},"新しいアンチビジョン"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},wAns.antivision)),
+    ce("div",{className:"card-i"},ce("div",{className:"lbl-i"},"新しいビジョン"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},wAns.vision)),
     ce("div",{className:"card"},
-      ce("div",{className:"lbl"},"今日、ビジョンに近づいた度"),
+      ce("div",{className:"lbl"},"今週、ビジョンに近づいた度"),
       ce("div",{style:{display:"flex",alignItems:"center",gap:12,marginTop:8}},
         ce("span",{style:{fontSize:12,color:"var(--txt2)"}},"1"),
         ce("input",{type:"range",min:1,max:10,step:1,value:score,onChange:function(e){setScore(Number(e.target.value));},style:{flex:1}}),
         ce("span",{style:{fontSize:24,fontWeight:500,minWidth:28}},score),
         ce("span",{style:{fontSize:12,color:"var(--txt2)"}},"/ 10"))),
     ce("div",{className:"card"},
-      ce("div",{className:"lbl"},"明日のTry提案"),
+      ce("div",{className:"lbl"},"来週のTry提案"),
       !tries.length&&!loadTries&&ce("button",{className:"btn-s",style:{marginTop:8,marginBottom:0},onClick:genTries},ce("i",{className:"ti ti-sparkles",style:{marginRight:6}}),"AIに提案してもらう"),
       loadTries&&ce("div",{style:{fontSize:14,color:"var(--txt2)",padding:"12px 0"}},"Sonnetが考え中..."),
       tries.length>0&&ce("div",{style:{marginTop:8}},
         tries.map(function(t,i){return ce("div",{key:i,className:"try-item"},ce("div",{className:"try-num"},i+1),ce("div",{style:{fontSize:14,lineHeight:1.5}},t));}),
         ce("button",{className:"btn-s",style:{fontSize:12,marginBottom:0},onClick:genTries},"再生成"))),
-    ce("button",{className:"btn-p",onClick:function(){addLog({evening1:e1.trim(),evening2:e2.trim(),score:score,tries:tries});setDone({title:"今日を締めました",msg:"お疲れさまでした。明日また。"});setScreen("done");}},"今日を締める")
+    ce("button",{className:"btn-p",onClick:finishWeekly},"今週を締める")
+  );
+
+  if(screen==="daily")return ce("div",null,
+    ce(OHdr,{title:"今日の自問",onBack:function(){setScreen("main");}}),
+    ce("div",{className:"card-d",style:{display:"flex",gap:10,alignItems:"flex-start"}},
+      ce("i",{className:"ti ti-alert-triangle",style:{fontSize:16,color:"var(--d-txt)",flexShrink:0,marginTop:2}}),
+      ce("div",null,ce("div",{className:"lbl-d"},"アンチビジョン"),ce("div",{className:"txt",style:{fontSize:13}},cfg.antivision))),
+    ce("div",{className:"checkin-q"},dailyQ),
+    ce("textarea",{value:dailyAns,onChange:function(e){setDailyAns(e.target.value);},rows:3,placeholder:"思ったことをそのまま...",style:{marginBottom:12}}),
+    ce("button",{className:"btn-p",onClick:saveDaily},"記録する"),
+    ce("button",{className:"btn-s",onClick:function(){setScreen("main");}},"ホームに戻る")
   );
 
   if(screen==="done")return ce("div",null,
@@ -265,37 +295,29 @@ function App(){
     ce("button",{className:"btn-p",onClick:function(){setScreen("main");}},"ホームに戻る")
   );
 
-  if(screen==="updatevision")return ce("div",null,
-    ce(OHdr,{title:"ビジョンを更新する",onBack:function(){setScreen("main");}}),
-    ce("div",{className:"sub",style:{marginBottom:"1.25rem"}},"現在の内容は履歴に保存されます。"),
-    ce("div",{className:"lbl-d"},"アンチビジョン"),ce("textarea",{value:uAV,onChange:function(e){setUAV(e.target.value);},rows:3,style:{marginBottom:"1.25rem",marginTop:4}}),
-    ce("div",{className:"lbl-i"},"ビジョン"),ce("textarea",{value:uV,onChange:function(e){setUV(e.target.value);},rows:3,style:{marginBottom:"1.25rem",marginTop:4}}),
-    ce("button",{className:"btn-p",onClick:function(){if(!uAV.trim()||!uV.trim())return;addHist(cfg.antivision,cfg.vision);saveCfg(Object.assign({},cfg,{antivision:uAV.trim(),vision:uV.trim()}));setScreen("main");setTab("home");}},"更新して保存"),
-    ce("button",{className:"btn-s",onClick:function(){setScreen("main");}},"キャンセル")
-  );
-
   if(screen==="settings")return ce("div",null,
     ce(OHdr,{title:"設定",onBack:function(){setScreen("main");}}),
     ce("div",{className:"card"},
-      ce("div",{className:"lbl"},"Claude API キー (Sonnet 4.6)"),
+      ce("div",{className:"lbl"},"Claude API キー(Sonnet 4.6)"),
       ce("input",{type:"password",value:apiKey,onChange:function(e){setApiKey(e.target.value);},placeholder:"sk-ant-...",style:{marginTop:4}}),
       ce("div",{style:{fontSize:12,color:"var(--txt2)",marginTop:6}},"console.anthropic.com で取得できます")),
     ce("button",{className:"btn-p",onClick:function(){saveCfg(Object.assign({},cfg,{apiKey:apiKey}));setScreen("main");}},"保存"),
     ce("div",{className:"sep"}),
+    ce("button",{className:"btn-s",onClick:function(){setScreen("diff");}},ce("i",{className:"ti ti-info-circle",style:{marginRight:6}}),"Dan Koe原文との差分"),
+    ce("div",{className:"sep"}),
     ce("button",{className:"btn-s",style:{color:"var(--d-txt)",borderColor:"var(--d-brd)"},
-      onClick:function(){if(window.confirm("全データを削除してリセットしますか?")){["av-config","av-milestones","av-logs","av-history"].forEach(lsdel);window.location.reload();}}},
+      onClick:function(){if(window.confirm("全データを削除してリセットしますか?")){["av-config","av-milestones","av-daily-logs","av-weekly-logs","av-history","av-weekly-answers"].forEach(lsdel);window.location.reload();}}},
       ce("i",{className:"ti ti-trash",style:{marginRight:6}}),"データをリセット")
   );
 
-  if(screen==="diff"&&diffItem)return ce("div",null,
-    ce(OHdr,{title:"差分比較",onBack:function(){setDiffItem(null);setScreen("main");setTab("history");}}),
-    ce("div",{className:"sub",style:{marginBottom:"1.25rem"}},diffItem.date+" のバージョンと現在を比較"),
-    ce("div",{className:"lbl"},"アンチビジョン"),
-    ce("div",{className:"card-d",style:{marginTop:4}},ce("div",{className:"lbl-d"},"旧"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},diffItem.antivision)),
-    ce("div",{className:"card"},ce("div",{className:"lbl"},"現在"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},cfg.antivision)),
-    ce("div",{className:"lbl",style:{marginTop:8}},"ビジョン"),
-    ce("div",{className:"card",style:{marginTop:4}},ce("div",{className:"lbl"},"旧"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},diffItem.vision)),
-    ce("div",{className:"card-i"},ce("div",{className:"lbl-i"},"現在"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},cfg.vision))
+  if(screen==="diff")return ce("div",null,
+    ce(OHdr,{title:"Dan Koe原文との差分",onBack:function(){setScreen("settings");}}),
+    ce("div",{className:"card"},ce("div",{className:"lbl"},"頻度"),ce("div",{className:"txt",style:{marginTop:4}},"原文: 年1回のリセット推奨 / このアプリ: 週1回の深掘り+毎日の自問")),
+    ce("div",{className:"card"},ce("div",{className:"lbl"},"深掘りの22問"),ce("div",{className:"txt",style:{marginTop:4}},"原文の質問を日本語化・順序はそのまま。内容の圧縮や省略はしていません")),
+    ce("div",{className:"card"},ce("div",{className:"lbl"},"日中の自問"),ce("div",{className:"txt",style:{marginTop:4}},"原文は「その日限り」の6〜9問のアラーム。このアプリはその9問をプール化し、毎日ランダムで1問")),
+    ce("div",{className:"card"},ce("div",{className:"lbl"},"進捗スコア(1〜10)"),ce("div",{className:"txt",style:{marginTop:4}},"原文にはない、このアプリ独自の追加要素")),
+    ce("div",{className:"card"},ce("div",{className:"lbl"},"AIのTry提案"),ce("div",{className:"txt",style:{marginTop:4}},"原文にはない、Claude API連携によるこのアプリ独自の追加要素")),
+    ce("div",{className:"card"},ce("div",{className:"lbl"},"6要素(ビデオゲーム化)"),ce("div",{className:"txt",style:{marginTop:4}},"原文通りAnti-Vision/Vision/1年/1ヶ月/週/制約の6要素を実装済み"))
   );
 
   function TabHome(){
@@ -305,54 +327,47 @@ function App(){
         ce("button",{className:"btn-icon",onClick:function(){setScreen("settings");},title:"設定"},ce("i",{className:"ti ti-settings"}))),
       ce("div",{className:"card-d"},ce("div",{className:"lbl-d"},ce("i",{className:"ti ti-alert-triangle",style:{marginRight:4}}),"アンチビジョン"),ce("div",{className:"txt",style:{marginTop:4}},cfg.antivision)),
       ce("div",{className:"card-i"},ce("div",{className:"lbl-i"},ce("i",{className:"ti ti-compass",style:{marginRight:4}}),"ビジョン"),ce("div",{className:"txt",style:{marginTop:4}},cfg.vision)),
-      ce("div",{className:"lbl",style:{margin:"12px 0 8px"}},"今日のチェックイン"),
-      ce("button",{className:"btn-mode",onClick:function(){setMAns(todayLog.morning||"");setScreen("morning");}},
-        ce("div",{className:"icon-box",style:{background:"var(--w-bg)",color:"var(--w-txt)"}},ce("i",{className:"ti ti-sun"})),
-        ce("div",{style:{flex:1}},ce("div",{style:{fontSize:15,fontWeight:500}},"朝のセッション"),ce("div",{style:{fontSize:12,color:"var(--txt2)"}},"1問 · 今日の焦点を決める")),
-        todayLog.morning&&ce("i",{className:"ti ti-circle-check",style:{fontSize:18,color:"var(--s-txt)"}})),
-      ce("button",{className:"btn-mode",onClick:function(){setCQ(CQ[Math.floor(Math.random()*CQ.length)]);setCAns(todayLog.checkin||"");setScreen("checkin");}},
-        ce("div",{className:"icon-box",style:{background:"var(--i-bg)",color:"var(--i-txt)"}},ce("i",{className:"ti ti-bell"})),
-        ce("div",{style:{flex:1}},ce("div",{style:{fontSize:15,fontWeight:500}},"昼のチェックイン"),ce("div",{style:{fontSize:12,color:"var(--txt2)"}},"1問 · 今この瞬間を点検する")),
-        todayLog.checkin&&ce("i",{className:"ti ti-circle-check",style:{fontSize:18,color:"var(--s-txt)"}})),
-      ce("button",{className:"btn-mode",onClick:function(){setE1(todayLog.evening1||"");setE2(todayLog.evening2||"");setScore(todayLog.score||5);setTries(todayLog.tries||[]);setScreen("evening");}},
-        ce("div",{className:"icon-box",style:{background:"var(--bg2)",color:"var(--txt2)"}},ce("i",{className:"ti ti-moon"})),
-        ce("div",{style:{flex:1}},ce("div",{style:{fontSize:15,fontWeight:500}},"夜のまとめ"),ce("div",{style:{fontSize:12,color:"var(--txt2)"}},"2問 + スコア + Try提案")),
-        todayLog.score&&ce("i",{className:"ti ti-circle-check",style:{fontSize:18,color:"var(--s-txt)"}})),
-      ce("button",{className:"btn-s",style:{fontSize:13,marginTop:4},onClick:function(){setUAV(cfg.antivision);setUV(cfg.vision);setScreen("updatevision");}},
-        ce("i",{className:"ti ti-refresh",style:{marginRight:6}}),"ビジョンを更新する")
+      ce("button",{className:"btn-mode",onClick:startDaily},
+        ce("div",{className:"icon-box",style:{background:"var(--i-bg)",color:"var(--i-txt)"}},ce("i",{className:"ti ti-bulb"})),
+        ce("div",{style:{flex:1}},ce("div",{style:{fontSize:15,fontWeight:500}},"今日の自問"),ce("div",{style:{fontSize:12,color:"var(--txt2)"}},"1問・オートパイロットを止める")),
+        dailyDoneToday&&ce("i",{className:"ti ti-circle-check",style:{fontSize:18,color:"var(--s-txt)"}})),
+      ce("button",{className:"btn-mode",onClick:startWeekly},
+        ce("div",{className:"icon-box",style:{background:"var(--w-bg)",color:"var(--w-txt)"}},ce("i",{className:"ti ti-telescope"})),
+        ce("div",{style:{flex:1}},ce("div",{style:{fontSize:15,fontWeight:500}},"週次の深掘り"),ce("div",{style:{fontSize:12,color:"var(--txt2)"}},"22問・前回: "+weeklyStatus)))
     );
   }
 
   function TabProgress(){
     return ce("div",null,
-      ce("div",{className:"hdr"},ce("span",{className:"logo"},"進捗"),ce("span",{className:"badge"},scored.length+"日記録")),
+      ce("div",{className:"hdr"},ce("span",{className:"logo"},"進捗"),ce("span",{className:"badge"},weeklyLogs.length+"週分")),
       ce("div",{className:"grid-2"},
-        ce("div",{className:"metric"},ce("div",{style:{fontSize:11,color:"var(--txt2)",marginBottom:4}},"平均スコア"),ce("div",{style:{fontSize:22,fontWeight:500}},avg)),
-        ce("div",{className:"metric"},ce("div",{style:{fontSize:11,color:"var(--txt2)",marginBottom:4}},"連続記録"),ce("div",{style:{fontSize:22,fontWeight:500}},streak+"日"))),
-      ce("div",{className:"card"},ce("div",{className:"lbl",style:{marginBottom:12}},"スコア推移"),ce(Chart,{data:chartData})),
-      logs.filter(function(l){return l.tries&&l.tries.length;}).slice(-3).reverse().map(function(l){
-        return ce("div",{key:l.date,className:"card"},
+        ce("div",{className:"metric"},ce("div",{style:{fontSize:11,color:"var(--txt2)",marginBottom:4}},"直近スコア"),ce("div",{style:{fontSize:22,fontWeight:500}},lastWeekly?lastWeekly.score:"-")),
+        ce("div",{className:"metric"},ce("div",{style:{fontSize:11,color:"var(--txt2)",marginBottom:4}},"日々の記録"),ce("div",{style:{fontSize:22,fontWeight:500}},dailyLogs.length+"件"))),
+      ce("div",{className:"card"},ce("div",{className:"lbl",style:{marginBottom:12}},"週次スコア推移"),ce(Chart,{data:chartData})),
+      weeklyLogs.slice(0,3).map(function(l){
+        return l.tries&&l.tries.length?ce("div",{key:l.date,className:"card"},
           ce("div",{className:"lbl",style:{marginBottom:8}},l.date+" のTry提案"),
-          l.tries.map(function(t,i){return ce("div",{key:i,className:"try-item"},ce("div",{className:"try-num"},i+1),ce("div",{style:{fontSize:13,lineHeight:1.5}},t));}));})
+          l.tries.map(function(t,i){return ce("div",{key:i,className:"try-item"},ce("div",{className:"try-num"},i+1),ce("div",{style:{fontSize:13,lineHeight:1.5}},t));})):null;
+      })
     );
   }
 
   function TabMilestones(){
     return ce("div",null,
-      ce("div",{className:"hdr"},ce("span",{className:"logo"},"マイルストーン")),
-      ce("div",{className:"sub",style:{marginBottom:"1.25rem"}},"ビジョン達成に向けた道筋を設計する"),
-      [{key:"year",label:"1年後のゴール",hint:"メインミッション",cls:"lbl-w",icon:"ti-trophy"},
-       {key:"month",label:"1ヶ月後のプロジェクト",hint:"ボス戦",cls:"lbl-i",icon:"ti-target"},
-       {key:"week",label:"今週のアクション",hint:"デイリークエスト",cls:"lbl-s",icon:"ti-list-check"}
+      ce("div",{className:"hdr"},ce("span",{className:"logo"},"目標")),
+      ce("div",{className:"sub",style:{marginBottom:"1.25rem"}},"週次の深掘りで自動更新されます(直接編集も可)"),
+      [{key:"year",label:"1年後のゴール",hint:"メインミッション",icon:"ti-trophy",cls:"lbl-w"},
+       {key:"month",label:"1ヶ月後のプロジェクト",hint:"ボス戦",icon:"ti-target",cls:"lbl-i"},
+       {key:"week",label:"今週のアクション",hint:"デイリークエスト",icon:"ti-list-check",cls:"lbl-s"},
+       {key:"constraints",label:"制約(やらないこと)",hint:"ルール",icon:"ti-shield-lock",cls:"lbl-d"}
       ].map(function(item){
         return ce("div",{key:item.key,className:"card"},
           ce("div",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:8}},
             ce("i",{className:"ti "+item.icon,style:{fontSize:16}}),
             ce("div",{className:item.cls},item.label),
             ce("div",{style:{fontSize:11,color:"var(--txt3)",marginLeft:"auto"}},item.hint)),
-          ce("textarea",{value:lms[item.key]||"",onChange:function(e){var k=item.key;setLms(function(m){var n=Object.assign({},m);n[k]=e.target.value;return n;});},rows:3,placeholder:"ここに書く..."}));
-      }),
-      ce("button",{className:"btn-p",onClick:function(){lsset("av-milestones",lms);}},"保存する")
+          ce("textarea",{value:milestones[item.key]||"",onChange:function(e){var k=item.key;setMilestones(function(m){var n=Object.assign({},m);n[k]=e.target.value;lsset("av-milestones",n);return n;});},rows:3,placeholder:"ここに書く..."}));
+      })
     );
   }
 
@@ -361,20 +376,30 @@ function App(){
       ce("div",{className:"hdr"},ce("span",{className:"logo"},"履歴"),ce("span",{className:"badge"},(hist.length+1)+"バージョン")),
       ce("div",{className:"card-d"},
         ce("div",{className:"lbl-d"},"現在のアンチビジョン"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},cfg.antivision),
-        ce("div",{className:"lbl-i",style:{marginTop:12}},"現在のビジョン"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},cfg.vision),
-        ce("div",{style:{fontSize:11,color:"var(--txt2)",marginTop:8}},"設定日: "+cfg.setupDate)),
-      !hist.length?ce("div",{className:"card",style:{textAlign:"center",padding:"2rem"}},ce("div",{style:{fontSize:14,color:"var(--txt2)"}},"ビジョンを更新すると、ここに履歴が残ります")):
+        ce("div",{className:"lbl-i",style:{marginTop:12}},"現在のビジョン"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},cfg.vision)),
+      !hist.length?ce("div",{className:"card",style:{textAlign:"center",padding:"2rem"}},ce("div",{style:{fontSize:14,color:"var(--txt2)"}},"週次の深掘りでアンチビジョン/ビジョンが変わると、ここに履歴が残ります")):
       hist.map(function(hh,i){
         return ce("div",{key:i,className:"card"},
           ce("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}},
             ce("div",{style:{fontSize:13,fontWeight:500}},"バージョン "+(hist.length-i)),
             ce("div",{style:{fontSize:11,color:"var(--txt2)"}},hh.date)),
           ce("div",{style:{fontSize:13,color:"var(--txt2)",lineHeight:1.5,marginBottom:10}},hh.antivision),
-          ce("button",{className:"btn-s",style:{fontSize:12,padding:"6px 12px",width:"auto",marginBottom:0},onClick:function(){setDiffItem(hh);setScreen("diff");}},
+          ce("button",{className:"btn-s",style:{fontSize:12,padding:"6px 12px",width:"auto",marginBottom:0},onClick:function(){setDiffItem(hh);setScreen("verdiff");}},
             ce("i",{className:"ti ti-git-compare",style:{marginRight:4}}),"現在と比較"));
       })
     );
   }
+
+  if(screen==="verdiff"&&diffItem)return ce("div",null,
+    ce(OHdr,{title:"バージョン比較",onBack:function(){setDiffItem(null);setScreen("main");setTab("history");}}),
+    ce("div",{className:"sub",style:{marginBottom:"1.25rem"}},diffItem.date+" のバージョンと現在を比較"),
+    ce("div",{className:"lbl"},"アンチビジョン"),
+    ce("div",{className:"card-d",style:{marginTop:4}},ce("div",{className:"lbl-d"},"旧"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},diffItem.antivision)),
+    ce("div",{className:"card"},ce("div",{className:"lbl"},"現在"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},cfg.antivision)),
+    ce("div",{className:"lbl",style:{marginTop:8}},"ビジョン"),
+    ce("div",{className:"card",style:{marginTop:4}},ce("div",{className:"lbl"},"旧"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},diffItem.vision)),
+    ce("div",{className:"card-i"},ce("div",{className:"lbl-i"},"現在"),ce("div",{className:"txt",style:{fontSize:13,marginTop:4}},cfg.vision))
+  );
 
   var TABS=[{id:"home",icon:"ti-home",label:"ホーム"},{id:"progress",icon:"ti-chart-line",label:"進捗"},{id:"milestones",icon:"ti-target",label:"目標"},{id:"history",icon:"ti-history",label:"履歴"}];
   return ce("div",null,
@@ -384,11 +409,9 @@ function App(){
       tab==="milestones"&&ce(TabMilestones,null),
       tab==="history"&&ce(TabHistory,null)),
     ce("nav",{className:"nav"},
-      TABS.map(function(t){
-        return ce("button",{key:t.id,className:"nav-btn"+(tab===t.id?" active":""),onClick:function(){setTab(t.id);setScreen("main");}},
-          ce("i",{className:"ti "+t.icon}),ce("span",null,t.label));
-      }))
-  );
+      TABS.map(function(t){return ce("button",{key:t.id,className:"nav-btn"+(tab===t.id?" active":""),onClick:function(){setTab(t.id);setScreen("main");}},
+        ce("i",{className:"ti "+t.icon}),ce("span",null,t.label));})
+  ));
 }
 
 ReactDOM.createRoot(document.getElementById("app")).render(ce(App));
