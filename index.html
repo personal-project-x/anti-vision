@@ -214,7 +214,10 @@ function App(){
   }
 
   function startDaily(){
-    setDailyQ(DAILY_QS[Math.floor(Math.random()*DAILY_QS.length)]);setDailyAns("");setScreen("daily");
+    var askedToday=dailyLogs.filter(function(l){return l.date===todayKey;}).map(function(l){return l.question;});
+    var pool=DAILY_QS.filter(function(q){return askedToday.indexOf(q)===-1;});
+    if(!pool.length)pool=DAILY_QS;
+    setDailyQ(pool[Math.floor(Math.random()*pool.length)]);setDailyAns("");setScreen("daily");
   }
   function saveDaily(){
     var nl=dailyLogs.concat([{date:todayKey,question:dailyQ,answer:dailyAns.trim()}]);
