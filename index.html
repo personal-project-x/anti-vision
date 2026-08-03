@@ -57,6 +57,10 @@ input[type=range]{width:100%;accent-color:var(--txt)}
 .try-num{width:22px;height:22px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--txt2);flex-shrink:0;margin-top:2px}
 .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:1.25rem}
 .sep{border-top:0.5px solid var(--brd);margin:1.5rem 0 1.25rem}
+.tldr{font-size:13px;color:var(--i-txt);border-left:2px solid var(--i-brd);padding:1px 0 1px 10px;line-height:1.5;margin-bottom:.75rem}
+.orig-box{font-size:12px;color:var(--txt2);background:var(--bg2);border-radius:var(--r);padding:10px 12px;line-height:1.7;margin-bottom:.75rem}
+.btn-orig{background:none;border:none;color:var(--txt3);font-size:12px;padding:0;cursor:pointer;margin-bottom:.75rem;text-decoration:underline}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 </style>
 </head>
 <body>
@@ -67,40 +71,130 @@ var ce=React.createElement;
 var useState=React.useState;
 var useEffect=React.useEffect;
 
+var BK_KEYS=["av-config","av-milestones","av-daily-logs","av-weekly-logs","av-history","av-weekly-answers"];
+
 var WEEKLY_QS=[
-  {key:"q1",phase:"不満を可視化する",q:"「まあ仕方ない」と受け入れて我慢し続けていることは何か?",rows:3},
-  {key:"q2",phase:"不満を可視化する",q:"繰り返し不満を言うのに、実際には変えていないことを3つ挙げるとしたら?",rows:3},
-  {key:"q3",phase:"不満を可視化する",q:"その不満を、言葉ではなく行動だけ見ていた人がいたら、あなたが本当は何を求めていると結論づけるか?",rows:3},
-  {key:"q4",phase:"不満を可視化する",q:"深く尊敬する人になら認めるのが耐えられない、今の生活についての真実は何か?",rows:3},
-  {key:"q5",phase:"アンチビジョンを構築する",q:"この先5年、何も変わらなかったら、ある平均的な火曜日を描写してください。",hint:"どこで目覚め、体はどう感じ、最初に何を考え、周りに誰がいて、9〜18時は何をし、22時はどんな気分か。",rows:5},
-  {key:"q6",phase:"アンチビジョンを構築する",q:"それを10年後でやってみてください。",hint:"何を失ったか。どんな機会が閉じたか。誰があなたを諦めたか。",rows:5},
-  {key:"q7",phase:"アンチビジョンを構築する",q:"人生の終わり。安全な選択だけをしてきたとしたら、その代償は何か?",hint:"感じること・挑戦すること・なることを、自分に許さなかったものは?",rows:4},
-  {key:"q8",phase:"アンチビジョンを構築する",q:"今描いた未来を、既に生きている人が周りにいないか? その人になると考えると何を感じるか?",rows:3},
-  {key:"q9",phase:"アンチビジョンを構築する",q:"本当に変わるために手放すべきアイデンティティは何か?",hint:"「私は〜な人間だ」という形で。手放す社会的コストは?",rows:3},
-  {key:"q10",phase:"アンチビジョンを構築する",q:"変われていない一番きまり悪い理由は何か?",hint:"弱い・怖い・怠けていると聞こえる、格好悪い本当の理由。",rows:3},
-  {key:"q11",phase:"アンチビジョンを構築する",q:"今の行動が自己防衛だとしたら、具体的に何を守っているのか? その代償は?",rows:3},
-  {key:"antivision",phase:"アンチビジョンを圧縮する",q:"「絶対にこうなりたくない」を一文で。",hint:"読むたびに何か感じるものにする。",rows:3},
-  {key:"q13",phase:"ビジョンを構築する",q:"現実性を忘れて。3年後、指を鳴らして違う人生を生きられるなら、本当は何を望むか?",hint:"平均的な火曜日はどんな一日か。Q5と同じ粒度で。",rows:5},
-  {key:"q14",phase:"ビジョンを構築する",q:"その人生が無理せず自然に感じるには、自分について何を信じている必要があるか?",hint:"「私は〜な人間だ」というアイデンティティ宣言。",rows:3},
-  {key:"q15",phase:"ビジョンを構築する",q:"もし既にその人間だとしたら、今週やることは何か?",rows:3},
-  {key:"vision",phase:"ビジョンを圧縮する",q:"向かっている先を一文で。",hint:"進化するものと知りつつ、今のVision MVPを。",rows:3},
-  {key:"q17",phase:"統合する",q:"今週を経て、自分が行き詰まっていた本当の理由について、一番しっくりくるものは何か?",rows:3},
-  {key:"q18",phase:"統合する",q:"本当の敵は何か?",hint:"状況や他人のせいではなく、支配してきた内的パターンや思い込みを一言で。",rows:2},
-  {key:"goal_year",phase:"ゴールを設定する",q:"1年後の視点: 何が本当になっていれば、古いパターンを断ち切れたと分かるか?",hint:"1つの具体的なことで。",rows:3},
-  {key:"goal_month",phase:"ゴールを設定する",q:"1ヶ月後の視点: 1年後の視点が現実であり続けるために、1ヶ月後に何が本当になっている必要があるか?",rows:3},
-  {key:"goal_week",phase:"ゴールを設定する",q:"日々の視点: なりつつある自分なら当然やる、今週タイムブロックできる2〜3個の行動は何か?",rows:3},
-  {key:"constraints",phase:"制約を決める",q:"このビジョンを実現するために、絶対に犠牲にしないものは何か?",hint:"やらないと決めるルール。",rows:3}
+  {key:"q1",phase:"不満を可視化する",rows:3,
+   q:"「まあこんなもんか」で片づけて、ずっと我慢してることって何?",
+   tldr:"諦めて飲み込んだやつを1個出す",
+   orig:"「まあ仕方ない」と受け入れて我慢し続けていることは何か?"},
+  {key:"q2",phase:"不満を可視化する",rows:3,
+   q:"毎回グチってるのに、結局1ミリも動かしてないこと。3つ挙げるとしたら?",
+   tldr:"口だけになってる領域を3つ",
+   orig:"繰り返し不満を言うのに、実際には変えていないことを3つ挙げるとしたら?"},
+  {key:"q3",phase:"不満を可視化する",rows:3,
+   q:"誰かがあなたの言葉を一切聞かず、行動だけを1ヶ月観察してたとする。その人は「この人が本当に欲しいもの」を何だと結論づける?",
+   tldr:"言ってることじゃなく、やってることが示す本音",
+   orig:"その不満を、言葉ではなく行動だけ見ていた人がいたら、あなたが本当は何を求めていると結論づけるか?"},
+  {key:"q4",phase:"不満を可視化する",rows:3,
+   q:"一番尊敬してる人にだけは知られたくない、今の自分の生活の事実って何?",
+   tldr:"一番バレたくない現状",
+   orig:"深く尊敬する人になら認めるのが耐えられない、今の生活についての真実は何か?"},
+  {key:"q5",phase:"アンチビジョンを構築する",rows:5,
+   q:"このまま5年、何も変わらなかったとする。その頃の、なんでもない火曜日を1日ぶん書いてみて。",
+   tldr:"5年後の「ふつうの1日」を実況する",
+   hint:"どこで目が覚めて、体はどんな感じで、起きて最初に何を考えて、周りに誰がいて、日中は何をして、夜22時にどんな気分か。",
+   orig:"この先5年、何も変わらなかったら、ある平均的な火曜日を描写してください。"},
+  {key:"q6",phase:"アンチビジョンを構築する",rows:5,
+   q:"同じことを10年後でやってみて。",
+   tldr:"5年の続き。失ったものを数える",
+   hint:"何がもう手に入らなくなってる? どのドアが閉まった? 誰があなたに期待するのをやめた?",
+   orig:"それを10年後でやってみてください。"},
+  {key:"q7",phase:"アンチビジョンを構築する",rows:4,
+   q:"人生の最後の場面。ずっと安全なほうだけ選び続けた結果、何を払ったことになる?",
+   tldr:"安全に生きた場合の請求書",
+   hint:"感じることも、挑むことも、なることも、自分に許さなかったもの。",
+   orig:"人生の終わり。安全な選択だけをしてきたとしたら、その代償は何か?"},
+  {key:"q8",phase:"アンチビジョンを構築する",rows:3,
+   q:"今書いた未来を、もう実際に生きてる人が身近にいない? その人になると想像したとき、何を感じる?",
+   tldr:"それ、すでに誰かがやってる",
+   orig:"今描いた未来を、既に生きている人が周りにいないか? その人になると考えると何を感じるか?"},
+  {key:"q9",phase:"アンチビジョンを構築する",rows:3,
+   q:"本気で変わるなら、捨てなきゃいけない「自分像」って何?",
+   tldr:"手放すべき自己像と、その代償",
+   hint:"「俺は〜な人間だ」の形で書く。それを捨てると、周りとの関係で何を失う?",
+   orig:"本当に変わるために手放すべきアイデンティティは何か?"},
+  {key:"q10",phase:"アンチビジョンを構築する",rows:3,
+   q:"変われてない理由のうち、一番かっこ悪くて言いたくないやつは何?",
+   tldr:"言い訳を剥がした後の本当の理由",
+   hint:"「弱い」「怖い」「面倒くさい」に聞こえるやつ。取り繕わずに書く。",
+   orig:"変われていない一番きまり悪い理由は何か?"},
+  {key:"q11",phase:"アンチビジョンを構築する",rows:3,
+   q:"今のやり方が全部「自分を守るため」だとしたら、具体的に何を守ってる? そのために何を諦めてる?",
+   tldr:"守ってるものと、その値段",
+   orig:"今の行動が自己防衛だとしたら、具体的に何を守っているのか? その代償は?"},
+  {key:"antivision",phase:"アンチビジョンを圧縮する",rows:3,
+   q:"ここまで書いたやつを、「絶対こうはなりたくない」の一文にまとめて。",
+   tldr:"全部を1行に圧縮する",
+   hint:"読み返すたびに胃のあたりに何か来る文にする。きれいにまとめようとしない。",
+   orig:"「絶対にこうなりたくない」を一文で。"},
+  {key:"q13",phase:"ビジョンを構築する",rows:5,
+   q:"実現できるかは一旦忘れて。3年後、指をパチンと鳴らせば別の人生に移れるとしたら、本当はどれがいい?",
+   tldr:"5問目の裏返しを、同じ解像度で",
+   hint:"そっちの「なんでもない火曜日」を書く。5問目と同じ細かさで。",
+   orig:"現実性を忘れて。3年後、指を鳴らして違う人生を生きられるなら、本当は何を望むか?"},
+  {key:"q14",phase:"ビジョンを構築する",rows:3,
+   q:"その人生が「背伸び」じゃなく自然に感じられるには、自分について何を信じてる必要がある?",
+   tldr:"そっち側の自己像を宣言する",
+   hint:"「俺は〜な人間だ」の形で1行。",
+   orig:"その人生が無理せず自然に感じるには、自分について何を信じている必要があるか?"},
+  {key:"q15",phase:"ビジョンを構築する",rows:3,
+   q:"もう既にその人間だったとしたら、今週やることは何?",
+   tldr:"今週の行動に翻訳する",
+   orig:"もし既にその人間だとしたら、今週やることは何か?"},
+  {key:"vision",phase:"ビジョンを圧縮する",rows:3,
+   q:"向かってる先を一文で。",
+   tldr:"現時点の暫定ビジョンを1行",
+   hint:"どうせ変わるので、今の時点の暫定版でいい。完成させようとしない。",
+   orig:"向かっている先を一文で。"},
+  {key:"q17",phase:"統合する",rows:3,
+   q:"ここまで書いてみて、「行き詰まってた本当の理由はこれだな」と一番しっくり来るのは?",
+   tldr:"今回の一番の発見",
+   orig:"今週を経て、自分が行き詰まっていた本当の理由について、一番しっくりくるものは何か?"},
+  {key:"q18",phase:"統合する",rows:2,
+   q:"で、本当の敵は何?",
+   tldr:"倒すべき相手に名前をつける",
+   hint:"状況や他人じゃなく、自分の中で繰り返してるパターンや思い込みを一言で。",
+   orig:"本当の敵は何か?"},
+  {key:"goal_year",phase:"ゴールを設定する",rows:3,
+   q:"1年後。何が実際に起きてたら「あのパターンは切れた」と言い切れる?",
+   tldr:"1年後の判定基準",
+   hint:"1つだけ、具体的に。",
+   orig:"1年後の視点: 何が本当になっていれば、古いパターンを断ち切れたと分かるか?"},
+  {key:"goal_month",phase:"ゴールを設定する",rows:3,
+   q:"その1年後がまだ現実的でいるために、1ヶ月後には何が起きてる必要がある?",
+   tldr:"1年後から逆算した1ヶ月後",
+   orig:"1ヶ月後の視点: 1年後の視点が現実であり続けるために、1ヶ月後に何が本当になっている必要があるか?"},
+  {key:"goal_week",phase:"ゴールを設定する",rows:3,
+   q:"なりかけてる自分なら当たり前にやってるはずの行動。今週カレンダーに入れられるやつを2〜3個。",
+   tldr:"今週、時間を確保する行動を2〜3個",
+   orig:"日々の視点: なりつつある自分なら当然やる、今週タイムブロックできる2〜3個の行動は何か?"},
+  {key:"constraints",phase:"制約を決める",rows:3,
+   q:"これを追いかける上で、絶対に犠牲にしないものは何?",
+   tldr:"越えない線を引く",
+   hint:"「これはやらない」と決めるルールとして書く。",
+   orig:"このビジョンを実現するために、絶対に犠牲にしないものは何か?"}
 ];
+
 var DAILY_QS=[
-  "今やっていることで、本当は何を避けているか?",
-  "この2時間を誰かが録画していたら、自分が人生に何を求めていると結論づけるか?",
-  "嫌いな人生に向かっているか、欲しい人生に向かっているか?",
-  "本当は一番重要なのに、重要じゃないふりをしていることは何か?",
-  "今日やったことのうち、本心からではなく「らしさを守るため」にやったことは何か?",
-  "今、一番生きていると感じるか、一番死んでいると感じるか?",
-  "「なりたい自分」だと人に思われる必要がなくなったら、何が変わるか?",
-  "人生のどこで、生きている実感を安全と引き換えにしているか?",
-  "明日なれる、なりたい自分の一番小さいバージョンは何か?"
+  {q:"今これをやることで、本当は何から逃げてる?",tldr:"避けてる対象を1つ特定する",
+   orig:"今やっていることで、本当は何を避けているか?"},
+  {q:"直近2時間を誰かに録画されてたとして、その人は「この人が人生に求めてるもの」を何だと思う?",tldr:"行動から逆算した本音",
+   orig:"この2時間を誰かが録画していたら、自分が人生に何を求めていると結論づけるか?"},
+  {q:"今、嫌なほうの人生に近づいてる? 欲しいほうに近づいてる?",tldr:"今日の向きを確認する",
+   orig:"嫌いな人生に向かっているか、欲しい人生に向かっているか?"},
+  {q:"本当は一番大事なのに、大したことないフリしてるのは何?",tldr:"軽く見せてる本命",
+   orig:"本当は一番重要なのに、重要じゃないふりをしていることは何か?"},
+  {q:"今日やったことで、やりたくてじゃなく「そう見られたいから」やったことは?",tldr:"体裁でやった行動",
+   orig:"今日やったことのうち、本心からではなく「らしさを守るため」にやったことは何か?"},
+  {q:"今の自分、生きてる感じ? それとも死んでる感じ?",tldr:"今この瞬間の温度",
+   orig:"今、一番生きていると感じるか、一番死んでいると感じるか?"},
+  {q:"「こういう人間だと思われたい」がゼロになったら、今日の動きは何が変わる?",tldr:"他人の目を外したときの行動",
+   orig:"「なりたい自分」だと人に思われる必要がなくなったら、何が変わるか?"},
+  {q:"どこで「安全」と引き換えに「生きてる感じ」を売ってる?",tldr:"安全と交換で失ってるもの",
+   orig:"人生のどこで、生きている実感を安全と引き換えにしているか?"},
+  {q:"明日なれる「なりたい自分」の、一番小さいバージョンは何?",tldr:"明日やる最小の一歩",
+   orig:"明日なれる、なりたい自分の一番小さいバージョンは何か?"}
 ];
 
 function lsget(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
@@ -143,7 +237,7 @@ function App(){
   var _dl=useState([]),dailyLogs=_dl[0],setDailyLogs=_dl[1];
   var _wl=useState([]),weeklyLogs=_wl[0],setWeeklyLogs=_wl[1];
   var _hs=useState([]),hist=_hs[0],setHist=_hs[1];
-  var _dq=useState(""),dailyQ=_dq[0],setDailyQ=_dq[1];
+  var _dq=useState(null),dailyQ=_dq[0],setDailyQ=_dq[1];
   var _da=useState(""),dailyAns=_da[0],setDailyAns=_da[1];
   var _sc2=useState(5),score=_sc2[0],setScore=_sc2[1];
   var _tr=useState([]),tries=_tr[0],setTries=_tr[1];
@@ -151,6 +245,9 @@ function App(){
   var _di=useState(null),diffItem=_di[0],setDiffItem=_di[1];
   var _dn=useState({title:"",msg:""}),done=_dn[0],setDone=_dn[1];
   var _ak=useState(""),apiKey=_ak[0],setApiKey=_ak[1];
+  var _so=useState(false),showOrig=_so[0],setShowOrig=_so[1];
+  var _it=useState(""),impText=_it[0],setImpText=_it[1];
+  var _im=useState(""),impMsg=_im[0],setImpMsg=_im[1];
 
   var todayKey=new Date().toISOString().slice(0,10);
 
@@ -175,12 +272,14 @@ function App(){
     var el=document.getElementById("wta"),ans=el?el.value.trim():"";
     if(!ans){if(el)el.focus();return;}
     var q=WEEKLY_QS[wStep],na=Object.assign({},wAns);na[q.key]=ans;setWAns(na);
+    setShowOrig(false);
     if(wStep<WEEKLY_QS.length-1){setWStep(wStep+1);}
     else{setScore(5);setTries([]);setScreen("weeklyfinish");}
   }
   function prevWeekly(){
     var el=document.getElementById("wta");
     if(el&&el.value.trim()){var q=WEEKLY_QS[wStep],na=Object.assign({},wAns);na[q.key]=el.value.trim();setWAns(na);}
+    setShowOrig(false);
     if(wStep>0)setWStep(wStep-1);else setScreen("main");
   }
   function genTries(){
@@ -213,14 +312,58 @@ function App(){
     setScreen("done");
   }
 
+
+  function buildBackup(){
+    var data={};
+    BK_KEYS.forEach(function(k){var v=lsget(k);if(v!==null)data[k]=v;});
+    if(data["av-config"])data["av-config"]=Object.assign({},data["av-config"],{apiKey:""});
+    return {app:"anti-vision",version:1,exportedAt:new Date().toISOString(),data:data};
+  }
+  function copyText(t){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){setImpMsg("コピーしました。メモアプリなどに貼り付けて保存してください。");},
+        function(){setImpMsg("コピーできませんでした。上の枠を長押しして全選択してください。");});
+    }else{setImpMsg("コピーできませんでした。上の枠を長押しして全選択してください。");}
+  }
+  function shareBackup(json){
+    var name="anti-vision-"+todayKey+".json";
+    try{
+      var file=new File([json],name,{type:"application/json"});
+      if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:"Anti-Vision バックアップ"}).catch(function(){});
+        return;
+      }
+    }catch(e){}
+    try{
+      var url=URL.createObjectURL(new Blob([json],{type:"application/json"}));
+      var a=document.createElement("a");a.href=url;a.download=name;
+      document.body.appendChild(a);a.click();
+      setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},1500);
+    }catch(e2){setImpMsg("保存できませんでした。上の枠のテキストをコピーしてください。");}
+  }
+  function doImport(){
+    var raw=impText.trim();
+    if(!raw){setImpMsg("読み込むJSONが空です。");return;}
+    var p;
+    try{p=JSON.parse(raw);}catch(e){setImpMsg("JSONとして読めませんでした。ファイルの中身が途中で切れていないか確認してください。");return;}
+    var d=(p&&p.data)?p.data:p;
+    if(!d||typeof d!=="object"||!d["av-config"]){setImpMsg("Anti-Visionのバックアップではないようです。");return;}
+    if(!window.confirm("今のデータを上書きして読み込みます。よろしいですか?"))return;
+    var curKey=(lsget("av-config")||{}).apiKey||"";
+    BK_KEYS.forEach(function(k){if(d[k]!==undefined&&d[k]!==null)lsset(k,d[k]);});
+    var nc=lsget("av-config")||{};
+    if(!nc.apiKey&&curKey){nc.apiKey=curKey;lsset("av-config",nc);}
+    window.location.reload();
+  }
+
   function startDaily(){
     var askedToday=dailyLogs.filter(function(l){return l.date===todayKey;}).map(function(l){return l.question;});
-    var pool=DAILY_QS.filter(function(q){return askedToday.indexOf(q)===-1;});
+    var pool=DAILY_QS.filter(function(q){return askedToday.indexOf(q.q)===-1;});
     if(!pool.length)pool=DAILY_QS;
     setDailyQ(pool[Math.floor(Math.random()*pool.length)]);setDailyAns("");setScreen("daily");
   }
   function saveDaily(){
-    var nl=dailyLogs.concat([{date:todayKey,question:dailyQ,answer:dailyAns.trim()}]);
+    var nl=dailyLogs.concat([{date:todayKey,question:dailyQ?dailyQ.q:"",answer:dailyAns.trim()}]);
     setDailyLogs(nl);lsset("av-daily-logs",nl);
     setDone({title:"記録しました",msg:"オートパイロットを止めました。"});
     setScreen("done");
@@ -252,8 +395,11 @@ function App(){
         ce("div",{style:{display:"flex",justifyContent:"space-between",fontSize:12,color:"var(--txt2)",marginBottom:6}},ce("span",null,(wStep+1)+" / "+WEEKLY_QS.length),ce("span",null,"自動保存")),
         ce("div",{className:"prog-bar"},ce("div",{className:"prog-fill",style:{width:pct+"%"}}))),
       ce("div",{className:"qnum"},q.phase),ce("div",{className:"qtxt"},q.q),
+      q.tldr&&ce("div",{className:"tldr"},"要するに: "+q.tldr),
       q.hint&&ce("div",{className:"hint"},q.hint),
       ce("textarea",{id:"wta",key:q.key,defaultValue:wAns[q.key]||"",rows:q.rows,placeholder:"ここに書く...",style:{marginBottom:"1.25rem"}}),
+      q.orig&&ce("button",{className:"btn-orig",onClick:function(){setShowOrig(!showOrig);}},showOrig?"原文どおりの訳を閉じる":"原文どおりの訳を見る"),
+      showOrig&&q.orig&&ce("div",{className:"orig-box"},q.orig),
       ce("button",{className:"btn-p",onClick:nextWeekly},wStep===WEEKLY_QS.length-1?"最後へ →":"次へ")
     );
   }
@@ -284,7 +430,9 @@ function App(){
     ce("div",{className:"card-d",style:{display:"flex",gap:10,alignItems:"flex-start"}},
       ce("i",{className:"ti ti-alert-triangle",style:{fontSize:16,color:"var(--d-txt)",flexShrink:0,marginTop:2}}),
       ce("div",null,ce("div",{className:"lbl-d"},"アンチビジョン"),ce("div",{className:"txt",style:{fontSize:13}},cfg.antivision))),
-    ce("div",{className:"checkin-q"},dailyQ),
+    ce("div",{className:"checkin-q"},
+      ce("div",null,dailyQ?dailyQ.q:""),
+      dailyQ&&dailyQ.tldr&&ce("div",{style:{fontSize:12,fontWeight:400,color:"var(--txt2)",marginTop:10}},"要するに: "+dailyQ.tldr)),
     ce("textarea",{value:dailyAns,onChange:function(e){setDailyAns(e.target.value);},rows:3,placeholder:"思ったことをそのまま...",style:{marginBottom:12}}),
     ce("button",{className:"btn-p",onClick:saveDaily},"記録する"),
     ce("button",{className:"btn-s",onClick:function(){setScreen("main");}},"ホームに戻る")
@@ -298,6 +446,41 @@ function App(){
     ce("button",{className:"btn-p",onClick:function(){setScreen("main");}},"ホームに戻る")
   );
 
+  if(screen==="backup"){
+    var bk=buildBackup(),bjson=JSON.stringify(bk,null,2);
+    var nD=(bk.data["av-daily-logs"]||[]).length,nW=(bk.data["av-weekly-logs"]||[]).length,nH=(bk.data["av-history"]||[]).length;
+    return ce("div",null,
+      ce(OHdr,{title:"バックアップ",onBack:function(){setImpMsg("");setScreen("settings");}}),
+      ce("div",{className:"card"},
+        ce("div",{className:"lbl"},"書き出す"),
+        ce("div",{className:"txt",style:{fontSize:13,color:"var(--txt2)",marginTop:4}},
+          "日々の記録 "+nD+"件 / 週次 "+nW+"件 / ビジョン履歴 "+nH+"件。APIキーは書き出しに含めません。"),
+        ce("textarea",{readOnly:true,value:bjson,rows:6,className:"mono",
+          style:{marginTop:10,fontSize:11,color:"var(--txt2)"},
+          onFocus:function(e){e.target.select();}}),
+        ce("button",{className:"btn-p",style:{marginTop:10},onClick:function(){shareBackup(bjson);}},
+          ce("i",{className:"ti ti-share",style:{marginRight:6}}),"ファイルとして保存する"),
+        ce("button",{className:"btn-s",style:{marginBottom:0},onClick:function(){copyText(bjson);}},
+          ce("i",{className:"ti ti-copy",style:{marginRight:6}}),"テキストをコピーする")),
+      ce("div",{className:"sep"}),
+      ce("div",{className:"card"},
+        ce("div",{className:"lbl"},"読み込む"),
+        ce("div",{className:"txt",style:{fontSize:13,color:"var(--txt2)",marginTop:4}},
+          "今の記録は上書きされます。APIキーは今の設定のまま残ります。"),
+        ce("input",{type:"file",accept:"application/json,.json",
+          style:{marginTop:12,fontSize:13,width:"100%"},
+          onChange:function(e){
+            var f=e.target.files&&e.target.files[0];if(!f)return;
+            var rd=new FileReader();
+            rd.onload=function(){setImpText(String(rd.result));setImpMsg("ファイルを読み込みました。下の「このデータを反映する」を押してください。");};
+            rd.readAsText(f);}}),
+        ce("textarea",{value:impText,onChange:function(e){setImpText(e.target.value);},rows:4,className:"mono",
+          placeholder:"またはJSONをここに貼り付け",style:{marginTop:10,fontSize:11}}),
+        ce("button",{className:"btn-p",style:{marginTop:10,marginBottom:0},onClick:doImport},"このデータを反映する")),
+      impMsg&&ce("div",{className:"card",style:{marginTop:10}},ce("div",{className:"txt",style:{fontSize:13}},impMsg))
+    );
+  }
+
   if(screen==="settings")return ce("div",null,
     ce(OHdr,{title:"設定",onBack:function(){setScreen("main");}}),
     ce("div",{className:"card"},
@@ -306,17 +489,18 @@ function App(){
       ce("div",{style:{fontSize:12,color:"var(--txt2)",marginTop:6}},"console.anthropic.com で取得できます")),
     ce("button",{className:"btn-p",onClick:function(){saveCfg(Object.assign({},cfg,{apiKey:apiKey}));setScreen("main");}},"保存"),
     ce("div",{className:"sep"}),
+    ce("button",{className:"btn-s",onClick:function(){setImpText("");setImpMsg("");setScreen("backup");}},ce("i",{className:"ti ti-database-export",style:{marginRight:6}}),"データを書き出す / 読み込む"),
     ce("button",{className:"btn-s",onClick:function(){setScreen("diff");}},ce("i",{className:"ti ti-info-circle",style:{marginRight:6}}),"Dan Koe原文との差分"),
     ce("div",{className:"sep"}),
     ce("button",{className:"btn-s",style:{color:"var(--d-txt)",borderColor:"var(--d-brd)"},
-      onClick:function(){if(window.confirm("全データを削除してリセットしますか?")){["av-config","av-milestones","av-daily-logs","av-weekly-logs","av-history","av-weekly-answers"].forEach(lsdel);window.location.reload();}}},
+      onClick:function(){if(window.confirm("全データを削除してリセットしますか?")){BK_KEYS.forEach(lsdel);window.location.reload();}}},
       ce("i",{className:"ti ti-trash",style:{marginRight:6}}),"データをリセット")
   );
 
   if(screen==="diff")return ce("div",null,
     ce(OHdr,{title:"Dan Koe原文との差分",onBack:function(){setScreen("settings");}}),
     ce("div",{className:"card"},ce("div",{className:"lbl"},"頻度"),ce("div",{className:"txt",style:{marginTop:4}},"原文: 年1回のリセット推奨 / このアプリ: 週1回の深掘り+毎日の自問")),
-    ce("div",{className:"card"},ce("div",{className:"lbl"},"深掘りの22問"),ce("div",{className:"txt",style:{marginTop:4}},"原文の質問を日本語化・順序はそのまま。内容の圧縮や省略はしていません")),
+    ce("div",{className:"card"},ce("div",{className:"lbl"},"深掘りの22問"),ce("div",{className:"txt",style:{marginTop:4}},"原文の質問を口語の日本語に書き換え。順序と問いの中身はそのまま。各問に「要するに」の要約と、原文に忠実な訳のトグルを併記")),
     ce("div",{className:"card"},ce("div",{className:"lbl"},"日中の自問"),ce("div",{className:"txt",style:{marginTop:4}},"原文は「その日限り」の6〜9問のアラーム。このアプリはその9問をプール化し、毎日ランダムで1問")),
     ce("div",{className:"card"},ce("div",{className:"lbl"},"進捗スコア(1〜10)"),ce("div",{className:"txt",style:{marginTop:4}},"原文にはない、このアプリ独自の追加要素")),
     ce("div",{className:"card"},ce("div",{className:"lbl"},"AIのTry提案"),ce("div",{className:"txt",style:{marginTop:4}},"原文にはない、Claude API連携によるこのアプリ独自の追加要素")),
